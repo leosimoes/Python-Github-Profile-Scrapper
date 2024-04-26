@@ -8,7 +8,8 @@ FIELDS_USER = ['login', 'name', 'html_url', 'id', 'node_id', 'company', 'blog', 
                'public_repos', 'followers', 'following', 'created_at', 'updated_at']
 FIELDS_REPOSITORIES = ['name', 'html_url', 'id', 'node_id', 'description', 'language', 'topics', 'default_branch',
                        'size', 'forks', 'forks_count', 'created_at', 'updated_at', 'pushed_at']
-
+URL_PROFILE = 'https://api.github.com/users/{}'
+URL_REPOSITORIES = 'https://api.github.com/users/{}/repos?page={}&per_page={}'
 
 def format_date(date_string):
     if date_string is None:
@@ -33,8 +34,7 @@ def main():
 
         username = sys.argv[1]
         print(f"Trying to get information for username {username}...")
-        url = f"https://api.github.com/users/{username}"
-        response = requests.get(url)
+        response = requests.get(URL_PROFILE.format(username))
 
         if response.status_code == 200:
             user_info = response.json()
@@ -56,8 +56,7 @@ def main():
                     if total_repos < per_page:
                         per_page = total_repos
 
-                    url = f"https://api.github.com/users/{username}/repos?page={page_number}&per_page={per_page}"
-                    response = requests.get(url)
+                    response = requests.get(URL_REPOSITORIES.format(username, page_number, per_page))
 
                     if response.status_code == 200:
                         for repository in response.json():
